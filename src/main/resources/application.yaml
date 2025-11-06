@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: easypay-api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/betting_demo
+    username: postgres
+    password: your_password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        time_zone: UTC
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+server:
+  port: 8080
+
+jwt:
+  secret: mysecretkey_mysecretkey_mysecretkey # should be at least 32 chars
+  expiration: 3600000 # 1 hour in milliseconds
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG
