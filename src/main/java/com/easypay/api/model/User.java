@@ -1,6 +1,11 @@
 package com.easypay.api.model;
 
+import com.easypay.api.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.postgresql.shaded.com.ongres.scram.client.ScramClient;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.Instant;
 import java.util.Set;
@@ -22,8 +27,9 @@ public class User {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private Set<String> roles;
+    private Set<Role> roles;
 
     @Column(updatable = false)
     private Instant createdAt;
@@ -34,10 +40,16 @@ public class User {
 
     public User () {}
 
-    public User (String fullName, String email, String password, String phone, Set<String> roles) {
+    public User (String fullName, String email, String password, String phone, Set<Role> roles) {
         this.fullName = fullName;
         this.email = email;
-        this.password = password;
+
+        if (password == null || password.isBlank()) {
+            this.password = null;
+        } else {
+            this.password = new BCryptPasswordEncoder().encode(password);
+        }
+
         this.phone = phone;
         this.roles = roles;
     }
@@ -46,6 +58,9 @@ public class User {
     protected void onCreate() {
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
+        if (this.roles == null) {
+            this.roles = Set.of(Role.USER);
+        }
     }
 
     @PreUpdate
@@ -53,7 +68,7 @@ public class User {
         this.updatedAt = Instant.now();
     }
 
-    protected void markDelete() {
+    protected void markAsDeleted() {
         this.isDeleted = true;
         this.deletedAt = Instant.now();
     }
@@ -67,7 +82,7 @@ public class User {
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public String getPhone() { return phone; }
-    public Set<String> getRoles() { return roles; }
+    public Set<Role> getRoles() { return roles; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
     public boolean getIsDeleted() { return isDeleted; }
@@ -77,9 +92,17 @@ public class User {
     public void setId(Long id) { this.id = id; }
     public void setFullName(String fullName) { this.fullName = fullName; }
     public void setEmail(String email) { this.email = email; }
-    public void setPassword(String password) { this.password = password; }
+
+    public void setPassword(String password) {
+        if (password == null || password.isBlank()) {
+            this.password = null;
+        } else {
+            this.password = new BCryptPasswordEncoder().encode(password);
+        }
+    }
+
     public void setPhone(String phone) { this.phone = phone; }
-    public void setRoles(Set<String> roles) { this.roles = roles; }
+    public void setRoles(Set<Role> roles) { this.roles = roles; }
     public void setLastLogin(Instant lastLogin) { this.lastLogin = lastLogin; }
 
 }

@@ -3,9 +3,9 @@ spring:
     name: easypay-api
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/betting_demo
+    url: jdbc:postgresql://localhost:5432/easypay-db
     username: postgres
-    password: your_password
+    password: postgres
     driver-class-name: org.postgresql.Driver
 
   jpa:
