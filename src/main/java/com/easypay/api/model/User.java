@@ -1,10 +1,7 @@
 package com.easypay.api.model;
 
 import com.easypay.api.model.enums.Role;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import org.postgresql.shaded.com.ongres.scram.client.ScramClient;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.Instant;
